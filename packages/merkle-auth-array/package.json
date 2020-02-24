@@ -1,0 +1,19 @@
+{
+  "name": "merkle-auth-array",
+  "version": "0.0.1",
+  "description": "Provides Merkle-tree based array authorization",
+  "main": "index.js",
+  "keywords": [
+    "array",
+    "hashtree",
+    "merkle",
+    "tree",
+    "authorization",
+    "JWT"
+  ],
+  "author": "Gregor Eesmaa",
+  "license": "SEE LICENSE IN ?",
+  "dependencies": {
+    "merkle-auth-core": "^0.0.1"
+  }
+}

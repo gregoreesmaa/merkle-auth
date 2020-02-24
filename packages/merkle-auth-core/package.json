@@ -1,0 +1,17 @@
+{
+  "name": "merkle-auth-core",
+  "version": "0.0.1",
+  "description": "Provides Merkle-tree based token authorization",
+  "main": "index.js",
+  "keywords": [
+    "hashtree",
+    "merkle tree",
+    "authorization",
+    "JWT"
+  ],
+  "author": "Gregor Eesmaa",
+  "license": "SEE LICENSE IN ?",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1"
+  }
+}

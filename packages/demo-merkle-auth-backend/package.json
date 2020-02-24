@@ -1,0 +1,21 @@
+{
+  "name": "demo-merkle-auth-backend",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --watch ../merkle-auth-core --watch ../merkle-auth-array --watch ../merkle-auth-jsonpath --watch .  -r esm server.js"
+  },
+  "dependencies": {
+    "@koa/cors": "^3.0.0",
+    "@koa/router": "^8.0.6",
+    "koa": "^2.11.0",
+    "koa-body": "^4.1.1",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^8.0.6",
+    "merkle-auth-array": "^0.0.1",
+    "merkle-auth-jsonpath": "^0.0.1"
+  },
+  "devDependencies": {
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.2"
+  }
+}
