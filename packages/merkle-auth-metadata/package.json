@@ -1,10 +1,12 @@
 {
-  "name": "merkle-auth-array",
+  "name": "merkle-auth-metadata",
   "version": "0.0.1",
-  "description": "Provides Merkle-tree based array authorization",
+  "description": "Provides additional metadata for Merkle-tree based authorization",
   "main": "index.js",
   "keywords": [
-    "array",
+    "metadata",
+    "expiry",
+    "issuer",
     "hashtree",
     "merkle",
     "tree",
@@ -13,7 +15,5 @@
   ],
   "author": "Gregor Eesmaa",
   "license": "SEE LICENSE IN ?",
-  "dependencies": {
-    "merkle-auth-core": "^0.0.1"
-  }
+  "dependencies": {}
 }

@@ -1,17 +1,20 @@
 {
-  "name": "merkle-auth-core",
+  "name": "merkle-auth-object",
   "version": "0.0.1",
-  "description": "Provides Merkle-tree based token authorization",
+  "description": "Provides Merkle-tree based object authorization (using JSONPath)",
   "main": "index.js",
   "keywords": [
+    "JSONPath",
+    "object",
     "hashtree",
-    "merkle tree",
+    "merkle",
+    "tree",
     "authorization",
     "JWT"
   ],
   "author": "Gregor Eesmaa",
   "license": "SEE LICENSE IN ?",
   "dependencies": {
-    "crypto-js": "^3.1.9-1"
+    "jsonpath": "^1.0.2"
   }
 }

@@ -5,10 +5,9 @@ import logger from "koa-logger";
 
 import Koa from 'koa';
 
-import jsonpathResource from "./api/jsonpath/resource";
-import jsonpathClaims from "./api/jsonpath/claims";
-import arrayResource from "./api/array/resource";
-import arrayClaims from "./api/array/claims";
+import objectResource from "./api/object";
+import arrayResource from "./api/array";
+import arrayMetaResource from "./api/array-metadata";
 
 const app = new Koa();
 const router = koaRouter();
@@ -17,17 +16,23 @@ app.use(logger());
 app.use(koaBody());
 app.use(koaCors());
 
-router.get('/jsonpath/claims', jsonpathClaims.get)
-      .get('/jsonpath/resource/single', jsonpathResource.single.get)
-      .get('/jsonpath/resource/single2', jsonpathResource.single2.get)
-      .get('/jsonpath/resource/multiple', jsonpathResource.multiple.get)
-      .get('/jsonpath/resource/multiple2', jsonpathResource.multiple2.get)
-      .get('/array/claims', arrayClaims.get)
+router.get('/array/claims', arrayResource.claims.get)
       .get('/array/resource/single', arrayResource.single.get)
       .get('/array/resource/single2', arrayResource.single2.get)
       .get('/array/resource/multiple', arrayResource.multiple.get)
-      .get('/array/resource/multiple2', arrayResource.multiple2.get);
+      .get('/array/resource/multiple2', arrayResource.multiple2.get)
+      .get('/array-meta/claims', arrayMetaResource.claims.get)
+      .get('/array-meta/resource/single', arrayMetaResource.single.get)
+      .get('/array-meta/resource/single2', arrayMetaResource.single2.get)
+      .get('/array-meta/resource/multiple', arrayMetaResource.multiple.get)
+      .get('/array-meta/resource/multiple2', arrayMetaResource.multiple2.get)
+      .get('/object/claims', objectResource.claims.get)
+      .get('/object/resource/single', objectResource.single.get)
+      .get('/object/resource/single2', objectResource.single2.get)
+      .get('/object/resource/multiple', objectResource.multiple.get)
+      .get('/object/resource/multiple2', objectResource.multiple2.get);
+
 
 app.use(router.routes());
 
-app.listen(3001);
+app.listen(6995);
