@@ -4,7 +4,6 @@
   "dependencies": {
     "isomorphic-unfetch": "^3.0.0",
     "merkle-auth": "^0.0.1",
-    "merkle-auth-metadata": "^0.0.1",
     "merkle-auth-object": "^0.0.1",
     "merkle-auth-salt": "^0.0.1",
     "react": "^16.12.0",

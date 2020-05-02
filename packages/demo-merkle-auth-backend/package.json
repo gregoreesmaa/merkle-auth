@@ -2,7 +2,8 @@
   "name": "demo-merkle-auth-backend",
   "private": true,
   "scripts": {
-    "start": "nodemon --watch ../merkle-auth --watch ../merkle-auth-object --watch ../merkle-auth-metadata --watch ../merkle-auth-salt --watch .  -r esm server.js"
+    "dev": "nodemon --watch ../merkle-auth --watch ../merkle-auth-object --watch ../merkle-auth-salt --watch .  -r esm server.js",
+    "start": "node -r esm server.js"
   },
   "dependencies": {
     "@koa/cors": "^3.0.0",
@@ -12,7 +13,6 @@
     "koa-logger": "^3.2.1",
     "koa-router": "^8.0.6",
     "merkle-auth": "^0.0.1",
-    "merkle-auth-metadata": "^0.0.1",
     "merkle-auth-object": "^0.0.1",
     "merkle-auth-salt": "^0.0.1"
   },
