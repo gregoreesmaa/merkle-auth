@@ -23,7 +23,7 @@ export default {
                     "testing.escaping": "escaping=works"
                 }
             };
-            const signature = merkleAuth.sign(claims);
+            const {signature} = merkleAuth.sign(claims);
             ctx.body = {claims, signature};
         }
     },

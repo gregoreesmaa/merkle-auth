@@ -1,4 +1,4 @@
-import {MerkleAuth} from "../merkle-auth";
+import {MerkleAuth} from "merkle-auth";
 
 export function withMetadata({sign = MerkleAuth.defaultSign, ...options} = {}) {
     return {

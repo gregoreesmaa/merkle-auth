@@ -16,7 +16,7 @@ export default {
     claims: {
         get: async (ctx) => {
             const claims = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"];
-            const signature = merkleAuth.sign(claims);
+            const {signature} = merkleAuth.sign(claims);
             ctx.body = {claims, signature};
         }
     },

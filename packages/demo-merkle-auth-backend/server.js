@@ -8,6 +8,7 @@ import Koa from 'koa';
 import objectResource from "./api/object";
 import arrayResource from "./api/array";
 import arrayMetaResource from "./api/array-metadata";
+import arraySaltResource from "./api/array-salt";
 
 const app = new Koa();
 const router = koaRouter();
@@ -26,6 +27,11 @@ router.get('/array/claims', arrayResource.claims.get)
       .get('/array-meta/resource/single2', arrayMetaResource.single2.get)
       .get('/array-meta/resource/multiple', arrayMetaResource.multiple.get)
       .get('/array-meta/resource/multiple2', arrayMetaResource.multiple2.get)
+      .get('/array-salt/claims', arraySaltResource.claims.get)
+      .get('/array-salt/resource/single', arraySaltResource.single.get)
+      .get('/array-salt/resource/single2', arraySaltResource.single2.get)
+      .get('/array-salt/resource/multiple', arraySaltResource.multiple.get)
+      .get('/array-salt/resource/multiple2', arraySaltResource.multiple2.get)
       .get('/object/claims', objectResource.claims.get)
       .get('/object/resource/single', objectResource.single.get)
       .get('/object/resource/single2', objectResource.single2.get)

@@ -40,9 +40,8 @@ function calculateHashAndCollectLeaves(node, leaves, hashLeaf, hashTwo) {
 }
 
 export function buildProofTree(root, claimsToProve) {
-    if (root.claims.size === 1) {
-        const [claim] = root.claims;
-        return {v: claim}
+    if (root.leaf) {
+        return {v: root.leaf}
     }
     const leftProof = claimsToProve.some(claim => root.left.claims.has(claim))
                       ? {l: buildProofTree(root.left, claimsToProve)}
@@ -65,7 +64,9 @@ export class MerkleAuth {
         payloadToClaims = MerkleAuth.defaultPayloadToClaims,
         proofToProofTree = MerkleAuth.defaultProofToProofTree,
         proofTreeToProof = MerkleAuth.defaultProofTreeToProof,
-        claimsComparator = MerkleAuth.defaultClaimsComparator
+        claimsComparator = MerkleAuth.defaultClaimsComparator,
+        getSigningProperties = MerkleAuth.defaultGetSigningProperties,
+        hashLeaves = MerkleAuth.defaultHashLeaves
     } = {}) {
         this.secret = secret;
         this.doHashTwo = hashTwo;
@@ -78,6 +79,8 @@ export class MerkleAuth {
         this.proofToProofTree = proofToProofTree;
         this.proofTreeToProof = proofTreeToProof;
         this.claimsComparator = claimsComparator;
+        this.getSigningProperties = getSigningProperties;
+        this.hashLeaves = hashLeaves;
     }
 
     static defaultHashTwo(left, right) {
@@ -122,19 +125,36 @@ export class MerkleAuth {
         return proof;
     }
 
+    static defaultGetSigningProperties(payload) {
+        return {};
+    }
+
+    static defaultHashLeaves(leaves, hashLeaf, signingProperties) {
+        return leaves.map(leaf => ({
+            leaf,
+            hash: hashLeaf(leaf),
+            claims: new Set([leaf])
+        }));
+    }
+
     sign(payload) {
         if (!this.secret) {
             throw new Error("Secret not set, unable to sign");
         }
 
-        const orderedHashedLeaves = this.claimsToLeaves(this.payloadToClaims(payload))
-                                        .sort(this.claimsComparator)
-                                        .map(claim => ({hash: this.doHashLeaf(claim)}));
+        const signingProperties = this.getSigningProperties(payload);
+        const claims = this.payloadToClaims(payload);
+        const leaves = this.claimsToLeaves(claims);
+        const orderedLeaves = leaves.sort(this.claimsComparator);
+        const orderedHashedLeaves = this.hashLeaves(orderedLeaves, this.doHashLeaf, signingProperties);
         const tree = buildTree(orderedHashedLeaves, (left, right) => ({hash: this.doHashTwo(left.hash, right.hash)}));
-        return this.doSign(tree.root.hash, this.secret, payload);
+        return {
+            signature: this.doSign(tree.root.hash, this.secret, payload),
+            signingProperties
+        };
     }
 
-    verify(proof, signature) {
+    verify(proof, expectedSignature) {
         if (!this.secret) {
             throw new Error("Secret not set, unable to verify");
         }
@@ -142,20 +162,19 @@ export class MerkleAuth {
         const leaves = [];
         const rootHash = calculateHashAndCollectLeaves(this.proofToProofTree(proof), leaves, this.doHashLeaf,
             this.doHashTwo);
-        if (this.doSign(rootHash, this.secret, proof) !== signature) {
-            throw new Error("Root hash signature mismatch");
+        const actualSignature = this.doSign(rootHash, this.secret, proof);
+        if (actualSignature !== expectedSignature) {
+            throw new Error(
+                "Root hash signature mismatch. Expected=" + expectedSignature + "; Actual=" + actualSignature);
         }
         return this.leavesToClaims(leaves);
     }
 
-    getProofTree(payload) {
+    getProofTree(payload, signingProperties) {
         const claims = this.payloadToClaims(payload);
-        const orderedHashedLeaves = this.claimsToLeaves(claims)
-                                        .sort(this.claimsComparator)
-                                        .map(claim => ({
-                                            hash: this.doHashLeaf(claim),
-                                            claims: new Set([claim])
-                                        }));
+        const leaves = this.claimsToLeaves(claims);
+        const orderedLeaves = leaves.sort(this.claimsComparator);
+        const orderedHashedLeaves = this.hashLeaves(orderedLeaves, this.doHashLeaf, signingProperties);
         const proofTree = buildTree(orderedHashedLeaves, (left, right) => ({
             hash: this.doHashTwo(left.hash, right.hash),
             claims: new Set([...left.claims, ...right.claims]),

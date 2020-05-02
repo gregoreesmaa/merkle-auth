@@ -1,7 +1,7 @@
 import {MerkleAuth} from "merkle-auth";
-import {withMetadata} from "merkle-auth-metadata";
+import {withSalt} from "merkle-auth-salt";
 
-const merkleAuth = new MerkleAuth(withMetadata({secret: "hesoyam"}));
+const merkleAuth = new MerkleAuth(withSalt({secret: "hesoyam"}));
 
 function get(ctx, predicate) {
     const {proof, signature} = JSON.parse(Buffer.from(ctx.request.headers['claims-user'], 'base64').toString('binary'));
@@ -16,15 +16,9 @@ function get(ctx, predicate) {
 export default {
     claims: {
         get: async (ctx) => {
-            const payload = {
-                claims: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"],
-                metadata: {
-                    exp: 0,
-                    iss: "backend"
-                }
-            };
-            const {signature} = merkleAuth.sign(payload);
-            ctx.body = {payload, signature};
+            const claims = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"];
+            const {signature, signingProperties} = merkleAuth.sign(claims);
+            ctx.body = {claims, signature, signingProperties};
         }
     },
     single: {

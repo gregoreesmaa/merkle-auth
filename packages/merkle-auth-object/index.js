@@ -3,16 +3,17 @@ import jp from "jsonpath";
 export function withObjectClaims(options = {}) {
     return {
         ...options,
-        claimsToLeaves: claims => claimsObjectToLeaves(claims),
+        claimsToLeaves: claims => claimsObjectToLeaves(claims, '$..*'),
         leavesToClaims: leaves => leavesToClaimsObject(leaves),
-        provableValuesToClaims: (provableValues, allClaims) => flatMap(provableValues, path => claimsObjectToLeaves(allClaims, path))
+        provableValuesToClaims: (provableValues, allClaims) =>
+            flatMap(provableValues, path => claimsObjectToLeaves(allClaims, path))
     }
 }
 
 const flatMap = (arr, f) =>
     arr.reduce((acc, x) => acc.concat(f(x)), []);
 
-function claimsObjectToLeaves(obj, path = '$..*') {
+function claimsObjectToLeaves(obj, path) {
     return jp.nodes(obj, path)
              .filter(({path, value}) =>
                  typeof value === 'string'

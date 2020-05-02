@@ -15,5 +15,7 @@
   ],
   "author": "Gregor Eesmaa",
   "license": "SEE LICENSE IN ?",
-  "dependencies": {}
+  "dependencies": {
+    "merkle-auth": "0.0.1"
+  }
 }

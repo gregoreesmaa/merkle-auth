@@ -3,11 +3,13 @@ import fetch from 'isomorphic-unfetch';
 import {MerkleAuth} from "merkle-auth";
 import {withObjectClaims} from "merkle-auth-object";
 import {withMetadata} from "merkle-auth-metadata";
+import {withSalt} from "merkle-auth-salt";
 
 const api = "http://localhost:6995";
 
 const arrayMerkleAuth = new MerkleAuth();
 const arrayMetaMerkleAuth = new MerkleAuth(withMetadata());
+const arraySaltMerkleAuth = new MerkleAuth(withSalt());
 const objectMerkleAuth = new MerkleAuth(withObjectClaims());
 
 function getArrClaims(setAuthorization) {
@@ -92,6 +94,47 @@ function requestArrMetaNoClaims({proofTree, signature}, setResponse) {
     fetchApi('array-meta/resource/multiple', setResponse)
 }
 
+function getArrSaltClaims(setAuthorization) {
+    fetch(`${api}/array-salt/claims`) // TODO proper REST HTTP methods
+        .then(r => r.json())
+        .then(res => {
+            console.log("Response", res);
+            console.log("Building merkle tree from claims", res.claims);
+            const proofTree = arraySaltMerkleAuth.getProofTree(res.claims, res.signingProperties);
+            setAuthorization({...res, proofTree})
+        })
+        .catch(() => setAuthorization("fail"));
+}
+
+function requestArrSaltSingle({proofTree, signature}, setResponse) {
+    const proof = proofTree.getProof("a");
+    fetchWithProof("array-salt/resource/single", {proof, signature}, setResponse)
+}
+
+function requestArrSaltSingleOther({proofTree, signature}, setResponse) {
+    const proof = proofTree.getProof("a");
+    fetchWithProof("array-salt/resource/single2", {proof, signature}, setResponse)
+}
+
+function requestArrSaltMultiple({proofTree, signature}, setResponse) {
+    const proof = proofTree.getProof("a", "g");
+    fetchWithProof("array-salt/resource/multiple", {proof, signature}, setResponse)
+}
+
+function requestArrSaltMultipleOther({proofTree, signature}, setResponse) {
+    const proof = proofTree.getProof("a", "g");
+    fetchWithProof("array-salt/resource/multiple2", {proof, signature}, setResponse)
+}
+
+function requestArrSaltEmptyProof({proofTree, signature}, setResponse) {
+    const proof = proofTree.getProof();
+    fetchWithProof("array-salt/resource/multiple", {proof, signature}, setResponse)
+}
+
+function requestArrSaltNoClaims({proofTree, signature}, setResponse) {
+    fetchApi('array-salt/resource/multiple', setResponse)
+}
+
 function getObjClaims(setAuthorization) {
     fetch(`${api}/object/claims`) // TODO proper REST HTTP methods
         .then(r => r.json())
@@ -163,6 +206,14 @@ function App() {
     const [responseArrMeta5, setResponseArrMeta5] = useState(undefined);
     const [responseArrMeta6, setResponseArrMeta6] = useState(undefined);
     const [responseArrMeta7, setResponseArrMeta7] = useState(undefined);
+    const [authorizationArrSalt, setAuthorizationArrSalt] = useState(undefined);
+    const [responseArrSalt, setResponseArrSalt] = useState(undefined);
+    const [responseArrSalt2, setResponseArrSalt2] = useState(undefined);
+    const [responseArrSalt3, setResponseArrSalt3] = useState(undefined);
+    const [responseArrSalt4, setResponseArrSalt4] = useState(undefined);
+    const [responseArrSalt5, setResponseArrSalt5] = useState(undefined);
+    const [responseArrSalt6, setResponseArrSalt6] = useState(undefined);
+    const [responseArrSalt7, setResponseArrSalt7] = useState(undefined);
     const [authorizationObj, setAuthorizationObj] = useState(undefined);
     const [responseObj, setResponseObj] = useState(undefined);
     const [responseObj2, setResponseObj2] = useState(undefined);
@@ -229,7 +280,8 @@ function App() {
                 {authorizationArrMeta == null ? 'none' : 'ok'}
             </div>
             <div>
-                <button onClick={() => requestArrMetaSingle(authorizationArrMeta, setResponseArrMeta)}>Perform request</button>
+                <button onClick={() => requestArrMetaSingle(authorizationArrMeta, setResponseArrMeta)}>Perform request
+                </button>
                 {responseArrMeta}
             </div>
             <div>
@@ -252,7 +304,8 @@ function App() {
             </div>
             <div>
                 <button
-                    onClick={() => requestArrMetaMultiple({...authorizationArrMeta, signature: 'forgot.'}, setResponseArrMeta5)}>
+                    onClick={() => requestArrMetaMultiple({...authorizationArrMeta, signature: 'forgot.'},
+                        setResponseArrMeta5)}>
                     Perform request with multiple claims, but wrong signature
                 </button>
                 {responseArrMeta5}
@@ -268,6 +321,56 @@ function App() {
                     Perform request without claims.
                 </button>
                 {responseArrMeta7}
+            </div>
+            <br/>
+            <h2>Arrays (with salting):</h2>
+
+            <div>
+                <button onClick={() => getArrSaltClaims(setAuthorizationArrSalt)}>Fetch claims</button>
+                {authorizationArrSalt == null ? 'none' : 'ok'}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltSingle(authorizationArrSalt, setResponseArrSalt)}>Perform request
+                </button>
+                {responseArrSalt}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltSingleOther(authorizationArrSalt, setResponseArrSalt2)}>
+                    Perform request with wrong claims.
+                </button>
+                {responseArrSalt2}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltMultiple(authorizationArrSalt, setResponseArrSalt3)}>
+                    Perform request with multiple claims.
+                </button>
+                {responseArrSalt3}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltMultipleOther(authorizationArrSalt, setResponseArrSalt4)}>
+                    Perform request with multiple claims, one of which is wrong.
+                </button>
+                {responseArrSalt4}
+            </div>
+            <div>
+                <button
+                    onClick={() => requestArrSaltMultiple({...authorizationArrSalt, signature: 'forgot.'},
+                        setResponseArrSalt5)}>
+                    Perform request with multiple claims, but wrong signature
+                </button>
+                {responseArrSalt5}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltEmptyProof(authorizationArrSalt, setResponseArrSalt6)}>
+                    Perform request with empty proof.
+                </button>
+                {responseArrSalt6}
+            </div>
+            <div>
+                <button onClick={() => requestArrSaltNoClaims(authorizationArrSalt, setResponseArrSalt7)}>
+                    Perform request without claims.
+                </button>
+                {responseArrSalt7}
             </div>
             <br/>
 

@@ -1,11 +1,10 @@
 {
-  "name": "merkle-auth-object",
+  "name": "merkle-auth-salt",
   "version": "0.0.1",
-  "description": "Provides Merkle-tree based object authorization (using JSONPath)",
+  "description": "Provides salting to Merkle-tree based authorization",
   "main": "index.js",
   "keywords": [
-    "JSONPath",
-    "object",
+    "salt",
     "hashtree",
     "merkle",
     "tree",
@@ -15,7 +14,7 @@
   "author": "Gregor Eesmaa",
   "license": "SEE LICENSE IN ?",
   "dependencies": {
-    "jsonpath": "^1.0.2",
+    "crypto-js": "^3.1.9-1",
     "merkle-auth": "0.0.1"
   }
 }
