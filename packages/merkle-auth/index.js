@@ -142,6 +142,14 @@ export class MerkleAuth {
             throw new Error("Secret not set, unable to sign");
         }
 
+        const {rootHash, signingProperties} = this.build(payload);
+        return {
+            signature: this.doSign(rootHash, this.secret, payload),
+            signingProperties
+        };
+    }
+
+    build(payload) {
         const signingProperties = this.getSigningProperties(payload);
         const claims = this.payloadToClaims(payload);
         const leaves = this.claimsToLeaves(claims);
@@ -149,7 +157,7 @@ export class MerkleAuth {
         const orderedHashedLeaves = this.hashLeaves(orderedLeaves, this.doHashLeaf, signingProperties);
         const tree = buildTree(orderedHashedLeaves, (left, right) => ({hash: this.doHashTwo(left.hash, right.hash)}));
         return {
-            signature: this.doSign(tree.root.hash, this.secret, payload),
+            rootHash: tree.root.hash,
             signingProperties
         };
     }
