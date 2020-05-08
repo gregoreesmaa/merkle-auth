@@ -162,7 +162,7 @@ export class MerkleAuth {
         };
     }
 
-    verify(proof, expectedSignature) {
+    verify(proof, signatureVerification) {
         if (!this.secret) {
             throw new Error("Secret not set, unable to verify");
         }
@@ -171,9 +171,15 @@ export class MerkleAuth {
         const rootHash = calculateHashAndCollectLeaves(this.proofToProofTree(proof), leaves, this.doHashLeaf,
             this.doHashTwo);
         const actualSignature = this.doSign(rootHash, this.secret, proof);
-        if (actualSignature !== expectedSignature) {
-            throw new Error(
-                "Root hash signature mismatch. Expected=" + expectedSignature + "; Actual=" + actualSignature);
+        if (typeof signatureVerification === "function") {
+            if (!signatureVerification(rootHash)) {
+                throw new Error("Root hash signature verification failed");
+            }
+        } else {
+            if (actualSignature !== signatureVerification) {
+                throw new Error(
+                    "Root hash signature mismatch. Expected=" + signatureVerification + "; Actual=" + actualSignature);
+            }
         }
         return this.leavesToClaims(leaves);
     }
